@@ -1,0 +1,24 @@
+1. Generate trainig corpus with rare words replaced by _RARE_:
+    python replace_rare.py ../gene.train > gene.rare.train
+
+2. Generate word count file:
+    python ../count_freqs.py gene.rare.train > gene.counts
+
+3. Tag dev corpus with simple tagger:
+    python simple_tagger.py gene.counts ../gene.dev > gene_dev.p1.out
+
+4. Mesure tagger score along with "golden" sample:
+
+    python ../eval_gene_tagger.py ../gene.key gene_dev.p1.out
+
+    Outputs:
+    Found 2669 GENEs. Expected 642 GENEs; Correct: 424.
+
+    precision  recall      F1-Score
+    GENE:    0.158861   0.660436    0.256116
+
+5. Tag test corpus with simple tagger:
+    python simple_tagger.py gene.counts ../gene.test > gene_test.p1.out
+
+6. Submit:
+    python submit.py

@@ -1,0 +1,75 @@
+Without rare word classes:
+
+1. Generate trainig corpus with rare words replaced by _RARE_:
+    in replace_rare_use_classes.py comment sinring:
+
+    # replacer.set_rare_word_filter({'_NUMERIC_' : "\d+", '_ALL_CAPITALS_' : "^[A-Z]+$", '_LAST_CAPITAL_' : "^.*[A-Z]{1}$"})
+
+    python replace_rare_use_classes.py ../gene.train > gene.rare.train
+
+2. Generate word count file:
+    python ../count_freqs.py gene.rare.train > gene.counts
+
+3. Tag dev corpus with simple tagger:
+
+    in viterbi_tagger.py comment string:
+
+    # tagger.set_rare_word_filter({'_NUMERIC_' : "\d+", '_ALL_CAPITALS_' : "^[A-Z]+$", '_LAST_CAPITAL_' : "^.*[A-Z]{1}$"})
+
+    python viterbi_tagger.py gene.counts ../gene.dev > gene_dev.p2.out
+
+4. Mesure tagger score along with "golden" sample:
+
+    python ../eval_gene_tagger.py ../gene.key gene_dev.p2.out
+
+    Outputs:
+
+    Found 373 GENEs. Expected 642 GENEs; Correct: 202.
+
+             precision  recall      F1-Score
+    GENE:    0.541555   0.314642    0.398030
+
+5. Tag test corpus with simple tagger:
+    python viterbi_tagger.py gene.counts ../gene.test > gene_test.p2.out
+
+6. Submit:
+    python submit.py
+
+
+WITH rare word classes:
+
+1. Generate trainig corpus with rare words replaced by _RARE_:
+    in replace_rare_use_classes.py uncomment sinring:
+ 
+    replacer.set_rare_word_filter([['_NUMERIC_', "[0-9]+"], ['_ALL_CAPITALS_', "^[A-Z]+$"], ['_LAST_CAPITAL_', "[A-Z]+$"]])
+
+    python replace_rare_use_classes.py ../gene.train > gene.rare.classes.train
+
+2. Generate word count file:
+    python ../count_freqs.py gene.rare.classes.train > gene.counts
+
+3. Tag dev corpus with simple tagger:
+
+    in viterbi_tagger.py comment string:
+
+    tagger.set_rare_word_filter([['_NUMERIC_', "[0-9]+"], ['_ALL_CAPITALS_', "^[A-Z]+$"], ['_LAST_CAPITAL_', "[A-Z]+$"]])
+
+    python viterbi_tagger.py gene.counts ../gene.dev > gene_dev.p3.out
+
+4. Mesure tagger score along with "golden" sample:
+
+    python ../eval_gene_tagger.py ../gene.key gene_dev.p3.out
+
+    Outputs:
+
+    Found 415 GENEs. Expected 642 GENEs; Correct: 222.
+
+             precision  recall      F1-Score
+    GENE:    0.534940   0.345794    0.420057
+
+
+5. Tag test corpus with simple tagger:
+    python viterbi_tagger.py gene.counts ../gene.test > gene_test.p3.out
+
+6. Submit:
+    python submit.py
